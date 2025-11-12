@@ -65,7 +65,7 @@ jobs:
 
       - name: Generate SBOM (SPDX)
         run: |
-          syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -o spdx-json=sbom-spdx.json
+          syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main -o spdx-json=sbom-spdx.json
           ls -lh sbom-spdx.json
 
       - name: Upload SBOM as artifact
@@ -80,7 +80,7 @@ jobs:
       - name: Scan image for vulnerabilities
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
           format: 'table'
           exit-code: '0'
           vuln-type: 'os,library'
@@ -89,7 +89,7 @@ jobs:
       - name: Export scan report
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
           format: 'json'
           output: 'trivy-report.json'
 
