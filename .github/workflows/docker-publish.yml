@@ -56,13 +56,17 @@ jobs:
           cache-to: type=gha,mode=max
 
       # ===============================
-      # 🧾 Génération du SBOM (Syft)
+      # 🧾 Génération du SBOM (Syft CLI)
       # ===============================
-      - name: Generate SBOM (Syft)
-        uses: anchore/syft-action@v0.16.0
-        with:
-          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          output: sbom-spdx.json
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft version
+
+      - name: Generate SBOM (SPDX)
+        run: |
+          syft ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -o spdx-json=sbom-spdx.json
+          ls -lh sbom-spdx.json
 
       - name: Upload SBOM as artifact
         uses: actions/upload-artifact@v4
@@ -97,22 +101,4 @@ jobs:
 
       # ===============================
       # 🔏 Signature du conteneur
-      # ===============================
-      - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        run: |
-          echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
-
-      # ===============================
-      # 📦 Publication du SBOM dans le registre OCI
-      # ===============================
-      - name: Attach SBOM to OCI image
-        if: ${{ github.event_name != 'pull_request' }}
-        env:
-          IMAGE_REF: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        run: |
-          cosign attach sbom $IMAGE_REF --sbom sbom-spdx.json
-          echo "✅ SBOM uploaded to OCI registry for $IMAGE_REF"
+      # ===========================
