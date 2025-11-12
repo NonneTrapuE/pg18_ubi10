@@ -2,8 +2,7 @@
 
 FROM rockylinux/rockylinux:10 AS builder
 
-ARG PG_VERSION=18
-ENV PG_VERSION=${PG_VERSION}
+ENV PG_VERSION=18
 
 RUN dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && dnf -y install postgresql${PG_VERSION}-server
@@ -12,8 +11,7 @@ RUN dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-
 
 FROM rockylinux/rockylinux:10-ubi-micro AS final
 
-ARG PG_VERSION=18
-ENV PG_VERSION=${PG_VERSION}
+ENV PG_VERSION=18
 ENV PGDATA=/var/lib/postgresql/data
 ENV PATH=/usr/pgsql-$PG_VERSION/bin:$PATH
 
@@ -83,3 +81,4 @@ WORKDIR ${PGDATA}
 
 EXPOSE 5432
 ENTRYPOINT ["entrypoint.sh"]
+
