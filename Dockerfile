@@ -9,7 +9,6 @@ ENV PGDATA=/var/lib/pgsql/18/data
 RUN dnf -y install https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
     && dnf -y install postgresql${PG_VERSION}-server
 
-
 RUN su postgres -c '/usr/pgsql-$PG_VERSION/bin/initdb -D ${PGDATA}'
 
 # ------------------------
