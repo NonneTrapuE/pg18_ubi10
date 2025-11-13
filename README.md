@@ -8,7 +8,7 @@ PostgreSQL 18 - Rocky 10 Ubi Micro base image
 Ex :
 
 ```
-docker run -d 
+docker run -d -v /usr/share/zoneinfo:/usr/share/zoneinfo:ro -p 5432:5432 ghcr.io/nonnetrapue/pg18_ubi10:latest
 ```
 
 Références :
